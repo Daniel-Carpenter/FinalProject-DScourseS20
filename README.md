@@ -8,7 +8,7 @@ First, open the file that contains the ".R" file extension in R. Under the `INPU
 
 Next, type the stocks that you want the program to evaluate for your portfolio. Note that the program will get rid of any offending stocks that do not meet your risk/return profile. If you would like to use the S&P 500 as your sample, then "comment out" the line that declares the `stockList` variable and remove the comments from the two lines preceding that declaration.
 
-If you wish to change the risk-free rate, you may do so. Note that the program will read at an annualized rate and convert it to a monthly rate for its evaluation. Additionally, the risk-free rate is assumed constant due to Yahoo Finance removing the U.S. Treasury Bill from their database in recent years.
+If you wish to change the risk-free rate, you may do so by changing the `riskFreeRate` variable. Note that the program will read at an annualized rate and convert it to a monthly rate for its evaluation. Additionally, the risk-free rate is assumed constant due to Yahoo Finance removing the U.S. Treasury Bill from their database in recent years.
 
 Next, enter the desired annualized return that you would like to receive in the variable `desiredReturn`. Additionally, enter the amount that you would like to invest as a dollar amount in `dollarsInvested` variable.
 
