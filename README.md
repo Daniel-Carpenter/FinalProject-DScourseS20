@@ -1,5 +1,5 @@
 # Description of Project
-This program uses Modern Portfolio Theory to optimize a multiple-stock portfolio. The portfolio can consist of any stock that the user desires, provided the stock ticker exists in Yahoo Finance's database. This theory minimizes the risk of a portfolio, given the user’s desired return. The program uses a linear optimizer, which adjusts the weights of each stock to minimize the risk while setting the expected return to the user’s input. The program will output the stock weights, risk, and return characteristics, and some visualizations that aid the user in decision-making.
+This program uses Modern Portfolio Theory to optimize the weights of individual stocks to form a multiple-stock portfolio. The portfolio can consist of any stock that the user desires, provided the stock ticker exists in Yahoo Finance's database. This theory minimizes the risk of a portfolio, given the user’s desired return. The program uses a linear optimizer, which adjusts the weights of each stock to minimize the risk while setting the expected return to the user’s input. The program will output the stock weights, risk, and return characteristics, and some visualizations that aid the user in decision-making.
 
 
 # Instructions to Replicate Code
