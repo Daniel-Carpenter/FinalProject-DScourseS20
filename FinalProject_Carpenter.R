@@ -11,12 +11,12 @@
   library(xtable)  
 
 # INPUTS  -------------------------------------------------------------------------------------------------------
-    startDate     <- Sys.Date() - 365 * 10
+    startDate     <- Sys.Date() - 365 * 3
     endDate       <- Sys.Date()
     
-    #df.SP500     <- GetSP500Stocks()
-    #stockList    <- df.SP500$Tickers
-    stockList     <- c('JNJ', 'PG', 'JPM')
+    df.SP500     <- GetSP500Stocks()
+    stockList    <- df.SP500$Tickers
+    #stockList     <- c('JNJ', 'PG', 'JPM')
     riskFreeRate  <- .0160
     desiredReturn       <- 0.15   # 10% = 0.10
     dollarsInvested     <- 10000
@@ -59,6 +59,7 @@
       group_by(stockName) %>%
       summarise(avgMonthlyReturn = mean(stockReturn)))
       rownames(df.return) = df.return$stockName
+    df.return1 <- df.return
     df.return <- t(data.matrix(df.return %>%
       select(-stockName)))
     
@@ -102,6 +103,7 @@
       portfolioOptimal <- cbind(as.data.frame(optimalWeights$solution),
                                 as.data.frame(optimalWeights$solution) * dollarsInvested)
         colnames(portfolioOptimal)  <- c("Stock Weight", "Dollar Investment")
+        portfolioOptimal            <- portfolioOptimal %>% mutate("Expected Return%" = df.return1$avgMonthlyReturn * 12)
         rownames(portfolioOptimal)  <- rownames(stockList)
 
   # Calculate Risk of Porfolio
@@ -120,8 +122,13 @@
         
       portfolioOptimal <- portfolioOptimal %>% 
                           mutate("Stock Name" = rownames(portfolioOptimal)) %>%
-                          select("Stock Name", "Stock Weight", "Dollar Investment") %>%
-                          filter(portfolioOptimal[1] > 0)
+                          select("Stock Name", "Stock Weight", "Dollar Investment", "Expected Return%") %>%
+                          filter(portfolioOptimal[1] > 0) #%>%
+      
+      portfolioOptimal <- portfolioOptimal %>%  
+                          mutate("Expected Risk in Dollars" = portfolioOptimal$`Dollar Investment` * risk) %>%
+                          mutate("Expected Return in Dollars" = portfolioOptimal$`Dollar Investment` * portfolioOptimal$`Expected Return%`) %>%
+                          select(-"Expected Return%")
         
       cat("Total Investment:",dollarsInvested, sep = " ")
       print(portfolioOptimal)
