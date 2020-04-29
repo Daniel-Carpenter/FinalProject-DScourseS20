@@ -11,14 +11,14 @@
   library(xtable)  
 
 # INPUTS  -------------------------------------------------------------------------------------------------------
-    startDate     <- Sys.Date() - 365 * 1
+    startDate     <- Sys.Date() - 365 * 10
     endDate       <- Sys.Date()
     
-    df.SP500     <- GetSP500Stocks()
-    stockList    <- df.SP500$Tickers
-    #stockList     <- c('JNJ', 'PG', 'JPM', 'MSFT', 'AAPL', 'GOLD', 'STF', 'FORD', 'IR', 'ADS')
+    #df.SP500     <- GetSP500Stocks()
+    #stockList    <- df.SP500$Tickers
+    stockList     <- c('JNJ', 'PG', 'JPM')
     riskFreeRate  <- .0160
-    desiredReturn       <- 0.06   # e.g. 10% = 0.10
+    desiredReturn       <- 0.15   # 10% = 0.10
     dollarsInvested     <- 10000
   
 # DATA PULL -----------------------------------------------------------------------------------------------------
@@ -59,15 +59,10 @@
       group_by(stockName) %>%
       summarise(avgMonthlyReturn = mean(stockReturn)))
       rownames(df.return) = df.return$stockName
-    df.return1 <- df.return
     df.return <- t(data.matrix(df.return %>%
       select(-stockName)))
     
-    df.CI <- df %>% #includes only returns
-      drop_na() %>%
-      filter(stockName != "^IRX")
-    
-    df    <- pivot_wider(df, 
+    df <- pivot_wider(df, 
                       names_from = stockName, 
                       values_from = stockReturn)
     
@@ -126,32 +121,12 @@
       portfolioOptimal <- portfolioOptimal %>% 
                           mutate("Stock Name" = rownames(portfolioOptimal)) %>%
                           select("Stock Name", "Stock Weight", "Dollar Investment") %>%
-                          filter(portfolioOptimal[1] > 0) #%>%
+                          filter(portfolioOptimal[1] > 0)
         
       cat("Total Investment:",dollarsInvested, sep = " ")
       print(portfolioOptimal)
       print(summaryTable)
-      print(bounds)
-
-# CONFIDENCE INTERVALS --------------------------------------------------------------------
       
-    df.CI <-  df.CI %>%
-              subset(stockName %in% portfolioOptimal$`Stock Name`)
-    sampleSize <- nrow(df.CI)
-      
-    # Worst and Best Returns - 95% Confidence Interval
-        alpha   <- 1 - (1 - .95) / 2
-        error   <- qnorm(alpha) * risk / sqrt(sampleSize)
-        upper   <- expectedReturn + error
-        lower   <- expectedReturn - error
-        
-        bounds  <- as.data.frame(rbind(c(lower, upper),
-                         c((1 + lower) * dollarsInvested, (1 + upper) * dollarsInvested)))
-        colnames(bounds) <- c("Worst Case", "Best Case")
-        rownames(bounds) <- c("Percent", "Dollars")
-  
-        
-          
 # VISUALIZATIONS --------------------------------------------------------------------------
     # Example Data
       xtable(exampleData)
@@ -162,7 +137,6 @@
     # Optimized Portfolio Stats
       xtable(summaryTable)
       xtable(portfolioOptimal)
-      xtable(bounds)
     
     # Monthly Returns by Stock  
       ggplot(data = exampleData, aes(
