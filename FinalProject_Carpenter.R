@@ -11,16 +11,16 @@
   library(xtable)  
 
 # INPUTS  -------------------------------------------------------------------------------------------------------
-    startDate     <- Sys.Date() - 365 * 3
-    endDate       <- Sys.Date()
+    startDate     <- Sys.Date() -  365 * 2 # "2020-04-01"
+    endDate       <- Sys.Date() 
     
-    df.SP500     <- GetSP500Stocks()
-    stockList    <- df.SP500$Tickers
-    #stockList     <- c('JNJ', 'PG', 'JPM', 'MSFT', 'AAPL', 'GOLD', 'STF', 'FORD', 'IR', 'ADS')
+    #df.SP500     <- GetSP500Stocks()
+    #stockList    <- df.SP500$Tickers
+    stockList     <- c('XLP', 'XLB',  'XLF', 'XLI', 'XLK', 'XLU', 'XLV', 'XLY') # 'XLE',
     riskFreeRate  <- .0160
-    desiredReturn       <- 0.06   # e.g. 10% = 0.10
+    desiredReturn       <- 0.075   # e.g. 10% = 0.10
     dollarsInvested     <- 10000
-  
+
 # DATA PULL -----------------------------------------------------------------------------------------------------
   # Make Variables Monthly
     desiredReturn <- desiredReturn / 12
@@ -128,11 +128,6 @@
                           select("Stock Name", "Stock Weight", "Dollar Investment") %>%
                           filter(portfolioOptimal[1] > 0) #%>%
         
-      cat("Total Investment:",dollarsInvested, sep = " ")
-      print(portfolioOptimal)
-      print(summaryTable)
-      print(bounds)
-
 # CONFIDENCE INTERVALS --------------------------------------------------------------------
       
     df.CI <-  df.CI %>%
@@ -149,28 +144,28 @@
                          c((1 + lower) * dollarsInvested, (1 + upper) * dollarsInvested)))
         colnames(bounds) <- c("Worst Case", "Best Case")
         rownames(bounds) <- c("Percent", "Dollars")
-  
+
         
-          
 # VISUALIZATIONS --------------------------------------------------------------------------
     # Example Data
-      xtable(exampleData)
+      #xtable(exampleData)
       
     # Variance-Covariance Matrix Example
-      xtable(VarCovMatrix)
+      #xtable(VarCovMatrix)
       
     # Optimized Portfolio Stats
-      xtable(summaryTable)
-      xtable(portfolioOptimal)
-      xtable(bounds)
+      #xtable(summaryTable)
+      #xtable(portfolioOptimal)
+      #xtable(bounds)
     
     # Monthly Returns by Stock  
       ggplot(data = exampleData, aes(
         x = date, 
         y = stockReturn,
         color = stockName)) +
-        geom_point() +
-        theme_minimal() +
+        geom_jitter() +
+        theme_hc() +
+        #facet_grid(rows = vars(stockName)) +
         labs(title = "Stock Returns",
              subtitle = "",
              caption = "Data from Yahoo Finance.",
@@ -178,4 +173,8 @@
              x = "Date",
              y = "Monthly Return")
 
-      
+# SUMMARY OUTPUT --------------------------------------------------------------------------
+  cat("Total Investment:",dollarsInvested, sep = " ")
+  print(portfolioOptimal)
+  print(summaryTable)
+  print(bounds)
